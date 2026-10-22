@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Smart Campus Complaints</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main class="auth">
+    <section class="auth-hero">
+      <p class="brand"><span class="brand-mark">S</span> Smart Campus</p>
+      <h1>Something broken on campus? Report it here.</h1>
+      <p class="lede">File a complaint in a minute, then follow it from submitted to resolved. The right office sees it straight away.</p>
+      <ul class="signs" aria-label="Complaint categories">
+        <li>Hostel</li><li>Canteen</li><li>IT &amp; Network</li><li>Infrastructure</li>
+        <li>Transport</li><li>Sanitation</li><li>Academic</li><li>Security</li>
+      </ul>
+    </section>
+
+    <section class="auth-panel">
+      <div class="auth-card">
+        <div class="tabs" role="tablist">
+          <button class="tab" role="tab" id="tabLogin" aria-selected="true">Log in</button>
+          <button class="tab" role="tab" id="tabRegister" aria-selected="false">Create account</button>
+        </div>
+
+        <form id="loginForm" novalidate>
+          <h2>Welcome back</h2>
+          <p class="hint">Log in with your campus email.</p>
+          <div class="field"><label for="lEmail">Email</label><input id="lEmail" type="email" autocomplete="username" required></div>
+          <div class="field"><label for="lPass">Password</label><input id="lPass" type="password" autocomplete="current-password" required></div>
+          <p class="form-error" id="loginError" role="alert"></p>
+          <button class="btn btn-primary" style="width:100%" type="submit">Log in</button>
+        </form>
+
+        <form id="registerForm" class="hidden" novalidate>
+          <h2>Create an account</h2>
+          <p class="hint">Choose a role. Admin registration requires an authorized setup code.</p>
+          <div class="field"><label for="rName">Full name</label><input id="rName" autocomplete="name" required></div>
+          <div class="field"><label for="rEmail">Email</label><input id="rEmail" type="email" autocomplete="username" required></div>
+          <div class="field"><label for="rDept">Department (optional)</label><input id="rDept" placeholder="e.g. MSc Computer Science"></div>
+          <div class="field">
+            <label for="rRole">Account type</label>
+            <select id="rRole" required>
+              <option value="STUDENT">Student</option>
+              <option value="ADMIN">Admin</option>
+            </select>
+          </div>
+          <div class="field hidden" id="adminCodeField">
+            <label for="rAdminCode">Admin setup code</label>
+            <input id="rAdminCode" type="password" autocomplete="off">
+            <span class="hint">Ask your system administrator for the code.</span>
+          </div>
+          <div class="field"><label for="rPass">Password</label><input id="rPass" type="password" autocomplete="new-password" minlength="6" required><span class="hint">At least 6 characters.</span></div>
+          <p class="form-error" id="registerError" role="alert"></p>
+          <button class="btn btn-primary" style="width:100%" type="submit">Create account</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

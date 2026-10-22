@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin · Smart Campus</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <p class="brand"><span class="brand-mark">S</span> Smart Campus · Admin</p>
+      <div class="who"><span id="userName"></span><button class="btn btn-ghost btn-sm" id="logoutBtn">Log out</button></div>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 class="page-title">All complaints</h1>
+    <p class="page-sub">Review what students have reported and update each complaint's status.</p>
+
+    <section class="stats" id="stats" aria-label="Summary"></section>
+
+    <div class="admin-grid">
+      <section>
+        <div class="toolbar">
+          <input id="search" type="search" placeholder="Search title, student or location" aria-label="Search complaints">
+          <select id="fStatus" aria-label="Filter by status"></select>
+          <select id="fCategory" aria-label="Filter by category"></select>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Complaint</th><th>Student</th><th>Category</th><th>Priority</th><th>Status</th><th></th></tr></thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <aside class="panel">
+        <h2>By category</h2>
+        <ul class="bars" id="bars"></ul>
+      </aside>
+    </div>
+  </main>
+
+  <dialog id="dlg" aria-labelledby="dlgTitle">
+    <div class="dlg-head"><h2 id="dlgTitle">Complaint</h2><button type="button" id="dlgClose" aria-label="Close">&times;</button></div>
+    <form class="dlg-body" id="dlgForm" novalidate>
+      <div id="dlgInfo"></div>
+      <div class="field"><label for="dStatus">Status</label><select id="dStatus"></select></div>
+      <div class="field"><label for="dRemark">Response to student</label><textarea id="dRemark" placeholder="Tell the student what is being done."></textarea></div>
+      <p class="form-error" id="dlgError" role="alert"></p>
+      <div class="dlg-actions">
+        <button type="button" class="btn btn-ghost" id="dlgCancel">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="dlgSave">Save changes</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
