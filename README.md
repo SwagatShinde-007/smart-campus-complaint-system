@@ -43,7 +43,25 @@ docker run --rm -p 8080:8080 -e SPRING_DATA_MONGODB_URI=mongodb://host.docker.in
 
 This assumes MongoDB is running on the host at port 27017. The containerized backend is available at http://localhost:8080.
 
-If the backend uses another host or port, edit `frontend/js/config.js`.
+The frontend uses `http://localhost:8080` when opened locally and the configured Render
+backend when deployed. To use a different backend, set `window.CAMPUS_API_BASE` before
+`js/config.js` is loaded (the URL must include `/api`) or update the production URL in
+`frontend/js/config.js`.
+
+## Deploy
+
+For Vercel, set the project **Root Directory** to `frontend`. The app is static HTML and
+requires no build command.
+
+For Render, deploy the backend as a Docker web service using `backend/Dockerfile`, and set:
+
+- `MONGODB_URI` to your MongoDB Atlas connection string, including the `smart_campus` database.
+- `JWT_SECRET` to a private random secret of at least 32 characters.
+- `ADMIN_REGISTRATION_CODE` to an optional code for creating admin accounts.
+
+The backend defaults to local MongoDB and a development-only JWT secret; do not use those
+defaults in a public deployment. The service listens on Render's `PORT` environment variable
+and uses port 8080 for local development.
 
 ## Using it
 - Click **Create account** to register as a student, or select **Admin** and enter the configured admin registration code.
@@ -63,12 +81,12 @@ If the backend uses another host or port, edit `frontend/js/config.js`.
 | PUT | `/api/admin/complaints/{id}/status` | admin | Update status and reply |
 | GET | `/api/admin/stats` | admin | Counts by status and category |
 
-Send the token as `Authorization: Bearer <token>`.
+Include the returned JWT in the request authorization header.
 
 ## Configuration (`backend/src/main/resources/application.properties`)
-- `spring.data.mongodb.uri` — MongoDB connection string
-- `app.jwt.secret` — JWT signing secret (32+ characters; change before deploying)
-- `app.admin.registration-code` / `ADMIN_REGISTRATION_CODE` — optional code required for admin registration; unset means admin registrations are disabled
+- `MONGODB_URI` — MongoDB connection string (defaults to local MongoDB for development)
+- `JWT_SECRET` — JWT signing secret (32+ characters; set before deploying)
+- `ADMIN_REGISTRATION_CODE` — optional code required for admin registration; unset means admin registrations are disabled
 
 ## Project layout
 ```

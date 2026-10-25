@@ -1,10 +1,5 @@
 /* Shared helpers: API client, session handling, small UI utilities */
 
-// Automatically switch between local backend and live Render backend based on environment
-const API_BASE = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-  ? "http://localhost:8080/api"
-  : "https://smart_campus-backend-a9uy.onrender.com/api";
-
 const CATEGORIES = {
   INFRASTRUCTURE: "Infrastructure", HOSTEL: "Hostel", ACADEMIC: "Academic",
   CANTEEN: "Canteen", TRANSPORT: "Transport", IT_NETWORK: "IT & Network",
