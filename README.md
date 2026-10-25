@@ -32,6 +32,17 @@ submitted to resolved. Admins review every complaint, update its status and repl
    ```
    Open http://localhost:5500. (VS Code "Live Server" also works.)
 
+### Run the backend with Docker
+
+From the project root, build and run the backend image:
+
+```
+docker build -t smart-campus-backend ./backend
+docker run --rm -p 8080:8080 -e SPRING_DATA_MONGODB_URI=mongodb://host.docker.internal:27017/smart_campus smart-campus-backend
+```
+
+This assumes MongoDB is running on the host at port 27017. The containerized backend is available at http://localhost:8080.
+
 If the backend uses another host or port, edit `frontend/js/config.js`.
 
 ## Using it
