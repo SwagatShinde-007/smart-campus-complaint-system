@@ -58,10 +58,18 @@ For Render, deploy the backend as a Docker web service using `backend/Dockerfile
 - `MONGODB_URI` to your MongoDB Atlas connection string, including the `smart_campus` database.
 - `JWT_SECRET` to a private random secret of at least 32 characters.
 - `ADMIN_REGISTRATION_CODE` to an optional code for creating admin accounts.
+- `FRONTEND_URL` to the deployed Vercel origin, for example `https://your-app.vercel.app`.
+- `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, and `MAIL_FROM` for an SMTP
+  provider. Password recovery stays unavailable until a mail host and sender are configured.
+- SMTP authentication and STARTTLS default to enabled; set `MAIL_SMTP_AUTH` or
+  `MAIL_SMTP_STARTTLS` to `false` only when your mail provider requires it.
 
 The backend defaults to local MongoDB and a development-only JWT secret; do not use those
 defaults in a public deployment. The service listens on Render's `PORT` environment variable
 and uses port 8080 for local development.
+
+Password-reset links are single-use and expire after 30 minutes. The reset page uses the
+frontend URL fragment so the token is not sent in the browser's initial HTTP request.
 
 ## Using it
 - Click **Create account** to register as a student, or select **Admin** and enter the configured admin registration code.
@@ -73,6 +81,8 @@ and uses port 8080 for local development.
 |---|---|---|---|
 | POST | `/api/auth/register` | public | Create student account; admin registration requires the configured code |
 | POST | `/api/auth/login` | public | Log in, returns JWT |
+| POST | `/api/auth/forgot-password` | public | Send a password-reset link when the account exists |
+| POST | `/api/auth/reset-password` | public | Set a new password using a valid reset token |
 | POST | `/api/complaints` | logged in | Submit complaint |
 | GET | `/api/complaints/my` | logged in | My complaints |
 | GET | `/api/complaints/{id}` | owner or admin | One complaint |

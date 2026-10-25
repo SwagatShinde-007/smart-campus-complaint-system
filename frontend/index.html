@@ -28,21 +28,22 @@
           <button class="tab" role="tab" id="tabRegister" aria-selected="false">Create account</button>
         </div>
 
-        <form id="loginForm" novalidate>
+        <form id="loginForm">
           <h2>Welcome back</h2>
           <p class="hint">Log in with your campus email.</p>
-          <div class="field"><label for="lEmail">Email</label><input id="lEmail" type="email" autocomplete="username" required></div>
+          <div class="field"><label for="lEmail">Email</label><input id="lEmail" type="email" autocomplete="username" maxlength="254" required></div>
           <div class="field"><label for="lPass">Password</label><input id="lPass" type="password" autocomplete="current-password" required></div>
           <p class="form-error" id="loginError" role="alert"></p>
           <button class="btn btn-primary" style="width:100%" type="submit">Log in</button>
+          <p class="auth-link"><button class="link-button" type="button" id="forgotPasswordLink">Forgot password?</button></p>
         </form>
 
-        <form id="registerForm" class="hidden" novalidate>
+        <form id="registerForm" class="hidden">
           <h2>Create an account</h2>
           <p class="hint">Choose a role. Admin registration requires an authorized setup code.</p>
-          <div class="field"><label for="rName">Full name</label><input id="rName" autocomplete="name" required></div>
-          <div class="field"><label for="rEmail">Email</label><input id="rEmail" type="email" autocomplete="username" required></div>
-          <div class="field"><label for="rDept">Department (optional)</label><input id="rDept" placeholder="e.g. MSc Computer Science"></div>
+          <div class="field"><label for="rName">Full name</label><input id="rName" autocomplete="name" maxlength="100" required></div>
+          <div class="field"><label for="rEmail">Email</label><input id="rEmail" type="email" autocomplete="username" maxlength="254" required></div>
+          <div class="field"><label for="rDept">Department (optional)</label><input id="rDept" maxlength="100" placeholder="e.g. MSc Computer Science"></div>
           <div class="field">
             <label for="rRole">Account type</label>
             <select id="rRole" required>
@@ -55,9 +56,28 @@
             <input id="rAdminCode" type="password" autocomplete="off">
             <span class="hint">Ask your system administrator for the code.</span>
           </div>
-          <div class="field"><label for="rPass">Password</label><input id="rPass" type="password" autocomplete="new-password" minlength="6" required><span class="hint">At least 6 characters.</span></div>
+          <div class="field"><label for="rPass">Password</label><input id="rPass" type="password" autocomplete="new-password" minlength="6" maxlength="72" required><span class="hint">At least 6 characters.</span></div>
           <p class="form-error" id="registerError" role="alert"></p>
           <button class="btn btn-primary" style="width:100%" type="submit">Create account</button>
+        </form>
+
+        <form id="forgotPasswordForm" class="hidden">
+          <h2>Reset your password</h2>
+          <p class="hint">Enter your account email and we’ll send a reset link if the account exists.</p>
+          <div class="field"><label for="forgotEmail">Email</label><input id="forgotEmail" type="email" autocomplete="email" maxlength="254" required></div>
+          <p class="form-error" id="forgotError" role="alert"></p>
+          <p class="form-success" id="forgotMessage" role="status"></p>
+          <button class="btn btn-primary" style="width:100%" type="submit">Send reset link</button>
+          <p class="auth-link"><button class="link-button" type="button" id="backToLogin">Back to log in</button></p>
+        </form>
+
+        <form id="resetPasswordForm" class="hidden">
+          <h2>Choose a new password</h2>
+          <p class="hint">Reset links expire after 30 minutes and can only be used once.</p>
+          <div class="field"><label for="newPassword">New password</label><input id="newPassword" type="password" autocomplete="new-password" minlength="6" maxlength="72" required></div>
+          <p class="form-error" id="resetError" role="alert"></p>
+          <p class="form-success" id="resetMessage" role="status"></p>
+          <button class="btn btn-primary" style="width:100%" type="submit">Save new password</button>
         </form>
       </div>
     </section>

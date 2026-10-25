@@ -1,14 +1,18 @@
 package com.campus.complaint.controller;
 
 import com.campus.complaint.dto.AuthResponse;
+import com.campus.complaint.dto.ForgotPasswordRequest;
 import com.campus.complaint.dto.LoginRequest;
 import com.campus.complaint.dto.RegisterRequest;
+import com.campus.complaint.dto.ResetPasswordRequest;
 import com.campus.complaint.model.Role;
 import com.campus.complaint.model.User;
 import com.campus.complaint.repository.UserRepository;
 import com.campus.complaint.security.JwtUtil;
+import com.campus.complaint.service.PasswordResetService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +21,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.time.Instant;
+import java.util.Locale;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -25,32 +31,45 @@ public class AuthController {
     private final UserRepository users;
     private final PasswordEncoder encoder;
     private final JwtUtil jwt;
+    private final PasswordResetService passwordResetService;
     private final String adminRegistrationCode;
 
     public AuthController(UserRepository users, PasswordEncoder encoder, JwtUtil jwt,
+                          PasswordResetService passwordResetService,
                           @Value("${app.admin.registration-code:}") String adminRegistrationCode) {
         this.users = users;
         this.encoder = encoder;
         this.jwt = jwt;
+        this.passwordResetService = passwordResetService;
         this.adminRegistrationCode = adminRegistrationCode;
     }
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public AuthResponse register(@Valid @RequestBody RegisterRequest r) {
-        String email = r.email().trim().toLowerCase();
+        if (r.password().getBytes(StandardCharsets.UTF_8).length > 72) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Password must be 72 UTF-8 bytes or fewer");
+        }
+        String email = r.email().trim().toLowerCase(Locale.ROOT);
         if (users.existsByEmail(email)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "An account with this email already exists");
         }
         Role role = registrationRole(r);
-        User user = users.save(User.builder()
-                .name(r.name().trim())
-                .email(email)
-                .password(encoder.encode(r.password()))
-                .role(role)
-                .department(r.department() == null ? "" : r.department().trim())
-                .createdAt(Instant.now())
-                .build());
+        User user;
+        try {
+            user = users.save(User.builder()
+                    .name(r.name().trim())
+                    .email(email)
+                    .password(encoder.encode(r.password()))
+                    .role(role)
+                    .department(r.department() == null ? "" : r.department().trim())
+                    .createdAt(Instant.now())
+                    .build());
+        } catch (DuplicateKeyException ex) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "An account with this email already exists", ex);
+        }
         return toResponse(user);
     }
 
@@ -77,10 +96,23 @@ public class AuthController {
 
     @PostMapping("/login")
     public AuthResponse login(@Valid @RequestBody LoginRequest r) {
-        User user = users.findByEmail(r.email().trim().toLowerCase())
+        User user = users.findByEmail(r.email().trim().toLowerCase(Locale.ROOT))
                 .filter(u -> encoder.matches(r.password(), u.getPassword()))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password"));
         return toResponse(user);
+    }
+
+    @PostMapping("/forgot-password")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public Map<String, String> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        passwordResetService.requestReset(request.email());
+        return Map.of("message", "If an account exists for that email, a password reset link has been sent.");
+    }
+
+    @PostMapping("/reset-password")
+    public Map<String, String> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        passwordResetService.resetPassword(request.token(), request.password());
+        return Map.of("message", "Password reset successfully. You can now log in.");
     }
 
     private AuthResponse toResponse(User u) {
